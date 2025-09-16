@@ -15,7 +15,7 @@ access token.
 1. Sign in or create an account at [Hugging Face](https://huggingface.co/).
 2. Navigate to the access token page under the settings page
 3. Create and save a new read token 
-4. Set the token as environment variable named HUGGINGFACE_TOKEN 
-- On macOS/Linux: ```bash export HUGGINGFACE_TOKEN="your-token-here"```
-- On Windows: `setx HUGGINGFACE_TOKEN "your-token-here"`
+4. Set the token as environment variable named HUGGINGFACE_HUB_TOKEN 
+- On macOS/Linux: ```bash export HUGGINGFACE_HUB_TOKEN=your-token-here```
+- On Windows: `setx HUGGINGFACE_HUB_TOKEN your-token-here`
  
