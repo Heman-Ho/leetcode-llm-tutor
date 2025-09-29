@@ -3,21 +3,27 @@ from transformers import AutoTokenizer
 from huggingface_hub import login
 from transformers import AutoModelForSequenceClassification
 
+tokenizer=AutoTokenizer.from_pretrained("t5-small")
+
 def preprocess_dataset(batch): 
-    tags = ", ".join(batch["tags"])
-    difficulty = batch["difficulty"]
-    input_text = f"Generate a leetcode style coding problem with tags: {tags} and difficulty: {difficulty}. \n"
-    target_text = batch["problem_description"]
-        
+    input_texts = []
+    target_texts = []
+
+    for tags_list, difficulty, problem_description in zip(batch["tags"], batch["difficulty"], batch["problem_description"]) :
+        tags = ", ".join(tags_list)
+        input_text = f"Generate a leetcode style coding problem with tags: {tags} and difficulty: {difficulty}. "
+        input_texts.append(input_text)
+        target_texts.append(problem_description)
+
     model_inputs = tokenizer(
-        input_text, 
+        input_texts,
         truncation=True,
         max_length=512,
         padding="max_length"
     )
 
     labels = tokenizer(
-        target_text,
+        target_texts,
         truncation=True,
         max_length=512,
         padding="max_length"
