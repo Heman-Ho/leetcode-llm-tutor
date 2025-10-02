@@ -1,10 +1,13 @@
 from datasets import load_dataset, get_dataset_split_names
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, DataCollatorForSeq2Seq, Seq2SeqTrainer, Seq2SeqTrainingArguments, T5ForConditionalGeneration
 from data import util
+import torch
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Load tokenizer and model
 checkpoint = "t5-small"
-model = T5ForConditionalGeneration.from_pretrained(checkpoint)
+model = T5ForConditionalGeneration.from_pretrained(checkpoint).to(device)
 tokenizer = AutoTokenizer.from_pretrained(checkpoint)
 
 # Load the dataset
