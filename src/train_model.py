@@ -6,7 +6,7 @@ import torch
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Load tokenizer and model
-checkpoint = "t5-small"
+checkpoint = "Salesforce/codet5-small"
 model = T5ForConditionalGeneration.from_pretrained(checkpoint).to(device)
 tokenizer = AutoTokenizer.from_pretrained(checkpoint)
 
@@ -31,6 +31,12 @@ print("training the model ...")
 training_args = Seq2SeqTrainingArguments(
     output_dir = "./checkpoints",
     eval_strategy = "epoch",
+    learning_rate = 5e-5, 
+    weight_decay = 0.01,
+    num_train_epochs = 3,
+    per_device_train_batch_size = 4,
+    per_device_eval_batch_size = 4,
+    predict_with_generate = True,
 )
 
 data_collator = DataCollatorForSeq2Seq(tokenizer, model=model)
@@ -45,3 +51,13 @@ trainer = Seq2SeqTrainer(
 )
 
 trainer.train()
+
+# Example of inference after traininig: 
+def generate_problem(tags: list[str], difficulty: str) -> str: 
+    input_text = f"Generate a leetcode style coding problem with tags: {', '.join(tags)} and difficulty: {difficulty}."
+    inputs = tokenizer(input_text, return_tensors="pt").to(device)
+    outputs = model.generate(**inputs, max_length=256)
+    return tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+print("Generating a sample problem with tags ['array', 'hash table'] and difficulty 'Medium':")
+print(generate_problem(["array", "hash table"], "Medium"))
